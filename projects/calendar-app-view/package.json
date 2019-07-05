@@ -1,0 +1,9 @@
+{
+  "name": "calendar-app-view",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^8.0.3",
+    "@angular/core": "^8.0.3",
+    "@fullcalendar/core": "^4.2.0"
+  }
+}
