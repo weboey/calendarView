@@ -41,7 +41,7 @@
               "node_modules/swiper/dist/css/swiper.min.css"
             ],
             "scripts": [
-              "node_modules/swiper/dist/js/swiper.js",
+              "src/assets/lib/swiper.js",
               "src/assets/lib/swiper.animate1.0.3.min.js"
             ]
           },

@@ -11,13 +11,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { registerLocaleData } from '@angular/common';
 import zh from '@angular/common/locales/zh';
+import {CalendarViewWeekComponent} from './calendar-view-week/calendar-view-week.component';
+import {CalendarViewDayComponent} from './calendar-view-day/calendar-view-day.component';
 
 registerLocaleData(zh);
 
 @NgModule({
   declarations: [
     AppComponent,
-    CalendarViewComponent
+    CalendarViewComponent,
+    CalendarViewWeekComponent,
+    CalendarViewDayComponent
   ],
   imports: [
     BrowserModule,

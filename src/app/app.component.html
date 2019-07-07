@@ -1,1 +1,25 @@
-<app-calendar-view></app-calendar-view>
+
+<div>
+  <ul class="tools-bar">
+    <li (click)="toggleMode('month')">月</li>
+    <li (click)="toggleMode('week')">周</li>
+    <li  class="on">日</li>
+    <li (click)="conSwipeInfo()">日程</li>
+  </ul>
+</div>
+<div>
+  <ng-container [ngSwitch]="nzMode">
+    <ng-container *ngSwitchCase="'month'" [ngTemplateOutlet]="monthModeTable"></ng-container>
+    <ng-container *ngSwitchCase="'week'" [ngTemplateOutlet]="weekModeTable"></ng-container>
+    <ng-container *ngSwitchCase="'day'" [ngTemplateOutlet]="dayModeTable"></ng-container>
+  </ng-container>
+</div>
+<ng-template #monthModeTable>
+  <app-calendar-view></app-calendar-view>
+</ng-template>
+<ng-template #weekModeTable>
+  <app-calendar-view-week></app-calendar-view-week>
+</ng-template>
+<ng-template #dayModeTable>
+  <app-calendar-view-day></app-calendar-view-day>
+</ng-template>

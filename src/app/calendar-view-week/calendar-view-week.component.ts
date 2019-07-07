@@ -16,13 +16,14 @@ import { isSameMonth } from 'date-fns';
 import { isSameDay } from 'date-fns';
 declare let Swiper: any;
 @Component({
-  selector: 'app-calendar-view',
-  templateUrl: './calendar-view.component.html',
-  styleUrls: ['./calendar-view.component.scss']
+  selector: 'app-calendar-view-week',
+  templateUrl: './calendar-view-week.component.html',
+  styleUrls: ['./calendar-view-week.component.scss']
 })
-export class CalendarViewComponent implements OnInit, AfterViewInit {
+export class CalendarViewWeekComponent implements OnInit, AfterViewInit {
   @Input() nzMode = 'month';
   swiper: any = {isEnd: false};
+  timeViewList = [];
   daysInWeek: DayCellContext[] = [];
   dateMatrix: DateCellContext[][] = [];
   dateMatrixList = [];
@@ -43,9 +44,26 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.setUpDaysInWeek();
     this.setMulMonthDateMatrix();
-    // this.activeDate = this.currentDate;
+    this.activeDate = this.currentDate;
+    this.setUpDateMatrix(true);
     this.calculateActiveDate();
-    // this.setUpDateMatrix(true);
+    this.setTimeViewData();
+  }
+  setTimeViewData() {
+    for (let i = 1; i < 12; i++) {
+      if (i < 10 ) {
+        this.timeViewList.push(`上午 0${i}:00`);
+      } else {
+        this.timeViewList.push(`下午 ${i}:00`);
+      }
+    }
+    for (let i = 1; i < 12; i++) {
+      if (i < 10 ) {
+        this.timeViewList.push(`上午 0${i}:00`);
+      } else {
+        this.timeViewList.push(`下午 ${i}:00`);
+      }
+    }
   }
   ngAfterViewInit(): void {
     console.log(this.activeDate);
@@ -68,7 +86,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
   }
   createSwipe() {
     this.swiper = new Swiper(this.panel.nativeElement, {
-      initialSlide: 1, // 初始化显示第几个
+      initialSlide: 2, // 初始化显示第几个
       zoom: {
         maxRatio: 4,
         toggle: false,
@@ -82,10 +100,10 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
       paginationType: 'fraction', // 分页器类型
       on: {
         slideChange: () => {
-          // if (this.swiper && this.swiper.isEnd) {
-          //   this.swiper.slideTo(2, 0);
-          // }
-          this.renderMonthDateMatrix(this.swiper.activeIndex);
+          console.log(this.swiper);
+          if (this.swiper && this.swiper.isEnd) {
+            this.swiper.slideTo(2, 0);
+          }
         }
       },
       // virtual: {
@@ -105,50 +123,19 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
   private get calendarStart(): Date {
     return startOfWeek(startOfMonth(this.activeDate), { weekStartsOn: this.dateHelper.getFirstDayOfWeek() });
   }
-  private renderMonthDateMatrix(index) {
-    if (typeof index === 'undefined') {
-      return;
-    }
-    const i = index - 1;
-    const curMonth = this.activeDate.getMonth();
-    console.log(curMonth);
-    console.log(i);
-    console.log(formatDate(this.activeDate, 'yyyy-MM-dd', 'zh_CN'));
-    if (i > 0) {
-      this.monthChangeHandler(curMonth + i);
-      // this.swiper.appendSlide('<div class="swiper-slide">这是一个新的slide</div>');
-      setTimeout( () => {
-        this.swiper.update();
-      }, 100);
-      // this.swiper.updateSlides();
-    }
-    console.log(this.dateMatrixList);
-    console.log(this.swiper);
-    console.log(this.swiper.refresh);
-    console.log(this.swiper.update);
-    console.log(this.swiper.updateSlides);
-    // swiper.appendSlide([
-    //   '<div class="swiper-slide">Slide ' + (++appendNumber) + '</div>',
-    //   '<div class="swiper-slide">Slide ' + (++appendNumber) + '</div>'
-    // ]);
-  }
   private setMulMonthDateMatrix() {
     const curMonth = this.activeDate.getMonth();
-    for (let i = 0; i < 3; i++) {
-      this.monthChangeHandler(curMonth + i - 1);
+    for (let i = 1; i < 5; i++) {
+      this.monthChangeHandler(curMonth + i - 2);
     }
   }
   private setUpDateMatrix(isTop = false): void {
     const dateMatrix = [];
     const monthStart = startOfMonth(this.activeDate);
     const monthEnd = endOfMonth(this.activeDate);
-    let weekDiff =
+    const weekDiff =
       differenceInCalendarWeeks(monthEnd, monthStart, { weekStartsOn: this.dateHelper.getFirstDayOfWeek() }) + 2;
-    if (this.nzMode === 'week') {
-      console.log(this.nzMode);
-      weekDiff = 1;
-    }
-    for (let week = 0; week < weekDiff; week++) {
+    for (let week = 0; week < 1; week++) {
       const row: DateCellContext[] = [];
       const weekStart = addDays(this.calendarStart, week * 7);
       for (let day = 0; day < 7; day++) {
@@ -162,7 +149,11 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
       }
       dateMatrix.push(row);
     }
-    this.dateMatrixList.push(dateMatrix);
+    if (isTop) {
+      this.dateMatrixList.unshift(dateMatrix);
+    } else {
+      this.dateMatrixList.push(dateMatrix);
+    }
   }
   private setMonthDateMatrix(monthDate) {
     const dateMatrix = [];
@@ -239,6 +230,10 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     console.log(this.swiper);
   }
 
+  toggleMode(v) {
+    this.nzMode = v;
+    this.ngOnInit();
+  }
 }
 
 
