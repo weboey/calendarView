@@ -36,6 +36,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
   activeDateCol = -1;
   activeMonthRow = -1;
   activeMonthCol = -1;
+  maxPoint = 12;
+  minPoint = 0;
   private currentDate = new Date();
   @ViewChild('panel', {static: false}) panel: ElementRef;
   constructor(private element: ElementRef, private dateHelper: DateHelperService) { }
@@ -68,7 +70,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
   }
   createSwipe() {
     this.swiper = new Swiper(this.panel.nativeElement, {
-      initialSlide: 1, // 初始化显示第几个
+      initialSlide: this.maxPoint / 2, // 初始化显示第几个
       zoom: {
         maxRatio: 4,
         toggle: false,
@@ -109,19 +111,27 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     if (typeof index === 'undefined') {
       return;
     }
-    const i = index - 1;
+    const i = index - this.maxPoint / 2;
     const curMonth = this.activeDate.getMonth();
     console.log(curMonth);
     console.log(i);
     console.log(formatDate(this.activeDate, 'yyyy-MM-dd', 'zh_CN'));
     if (i > 0) {
-      this.monthChangeHandler(curMonth + i);
+      if (Math.abs(this.maxPoint - i) <= 4) {
+        this.monthChangeHandler(this.maxPoint + 1);
+        this.maxPoint ++;
+      }
       // this.swiper.appendSlide('<div class="swiper-slide">这是一个新的slide</div>');
-      setTimeout( () => {
-        this.swiper.update();
-      }, 100);
       // this.swiper.updateSlides();
+    } else {
+      if (Math.abs(this.minPoint - i) <= 4) {
+        this.monthChangeHandler(this.minPoint - 1);
+        this.maxPoint --;
+      }
     }
+    setTimeout( () => {
+      this.swiper.update();
+    }, 100);
     console.log(this.dateMatrixList);
     console.log(this.swiper);
     console.log(this.swiper.refresh);
@@ -134,8 +144,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
   }
   private setMulMonthDateMatrix() {
     const curMonth = this.activeDate.getMonth();
-    for (let i = 0; i < 3; i++) {
-      this.monthChangeHandler(curMonth + i - 1);
+    for (let i = this.minPoint; i <= this.maxPoint; i++) {
+      this.monthChangeHandler(curMonth + i - this.maxPoint / 2);
     }
   }
   private setUpDateMatrix(isTop = false): void {
